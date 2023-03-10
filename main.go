@@ -13,7 +13,7 @@ func main() {
 	charCount := make(map[rune]int)
 
 	// Указываем путь к папке с файлами
-	folderPath := "folder"
+	folderPath := "folderWithFiles"
 
 	// Открываем папку и перебираем все файлы в ней
 	files, err := os.ReadDir(folderPath)
