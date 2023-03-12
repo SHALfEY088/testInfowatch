@@ -11,6 +11,7 @@ import (
 )
 
 func main() {
+	var mutex sync.Mutex
 	// Получаем количество доступных процессоров
 	numCPUs := runtime.NumCPU()
 
@@ -45,7 +46,6 @@ func main() {
 				if err != nil {
 					panic(err)
 				}
-				defer fileContent.Close()
 
 				scanner := bufio.NewScanner(fileContent)
 				buf := bytes.Buffer{}
@@ -54,13 +54,14 @@ func main() {
 					buf.WriteString(scanner.Text())
 				}
 
-				var mutex sync.Mutex
 				// Считаем количество встречающихся символов и добавляем в общую мапу
 				for _, r := range buf.String() {
 					mutex.Lock()
 					charCount[r]++
 					mutex.Unlock()
 				}
+
+				fileContent.Close()
 			}
 		}()
 	}
