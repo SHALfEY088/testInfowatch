@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"os"
+	"sync"
 	"time"
 )
 
@@ -22,18 +23,46 @@ func CreateFiles() {
 	// Инициализируем генератор случайных чисел
 	rand.Seed(time.Now().UnixNano())
 
-	// Создаем n файлов со случайным содержимым
+	// Используем каналы для передачи данных между горутинами
+	fileNameChan := make(chan string, n)
+	fileContentChan := make(chan string, n)
+
+	// Используем wait group для ожидания завершения всех горутин
+	var wg sync.WaitGroup
+	wg.Add(n)
+
+	// Создаем горутины, каждая из которых создает файл с заданным именем и содержимым
 	for i := 0; i < n; i++ {
-		// Генерируем случайное имя файла
-		fileName := generateRandomString(10)
-		// Генерируем случайное содержимое файла
-		fileContent := generateRandomStringWithSpace(100)
-		// Создаем файл в указанной папке и записываем в него содержимое
-		err := ioutil.WriteFile(fmt.Sprintf("%s/%s.txt", folderPath, fileName), []byte(fileContent), os.ModePerm)
-		if err != nil {
-			panic(err)
-		}
+		// Генерируем случайное имя файла и отправляем его в канал fileNameChan
+		go func() {
+			fileName := generateRandomString(10)
+			fileNameChan <- fileName
+		}()
+
+		// Генерируем случайное содержимое файла и отправляем его в канал fileContentChan
+		go func() {
+			fileContent := generateRandomStringWithSpace(100)
+			fileContentChan <- fileContent
+		}()
+
+		// Создаем файл с заданным именем и содержимым, используя данные из каналов
+		go func() {
+			fileName := <-fileNameChan
+			fileContent := <-fileContentChan
+
+			// Создаем файл в указанной папке и записываем в него содержимое
+			err := ioutil.WriteFile(fmt.Sprintf("%s/%s.txt", folderPath, fileName), []byte(fileContent), os.ModePerm)
+			if err != nil {
+				panic(err)
+			}
+
+			// Уменьшаем счетчик wait group
+			wg.Done()
+		}()
 	}
+
+	// Ожидаем завершения всех горутин
+	wg.Wait()
 }
 
 // Генерирует случайную строку указанной длины
