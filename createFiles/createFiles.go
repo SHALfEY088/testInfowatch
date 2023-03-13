@@ -27,7 +27,7 @@ func CreateFiles() {
 		// Генерируем случайное имя файла
 		fileName := generateRandomString(10)
 		// Генерируем случайное содержимое файла
-		fileContent := generateRandomString(100)
+		fileContent := generateRandomStringWithSpace(100)
 		// Создаем файл в указанной папке и записываем в него содержимое
 		err := ioutil.WriteFile(fmt.Sprintf("%s/%s.txt", folderPath, fileName), []byte(fileContent), os.ModePerm)
 		if err != nil {
@@ -38,6 +38,16 @@ func CreateFiles() {
 
 // Генерирует случайную строку указанной длины
 func generateRandomString(length int) string {
+	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+	b := make([]byte, length)
+	for i := range b {
+		b[i] = charset[rand.Intn(len(charset))]
+	}
+	return string(b)
+}
+
+// Генерирует случайную строку указанной длины c пробелами и символами перевода строки
+func generateRandomStringWithSpace(length int) string {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 \n"
 	b := make([]byte, length)
 	for i := range b {

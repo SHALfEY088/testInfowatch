@@ -1,11 +1,11 @@
 package main
 
 import (
-	. "github.com/SHALfEY088/testInfowatch/countSymbols"
-	. "github.com/SHALfEY088/testInfowatch/createFiles"
+	s "github.com/SHALfEY088/testInfowatch/countSymbols"
+	f "github.com/SHALfEY088/testInfowatch/createFiles"
 )
 
 func main() {
-	CreateFiles()
-	CountSymbolsInFiles()
+	f.CreateFiles()
+	s.CountSymbolsInFiles()
 }
