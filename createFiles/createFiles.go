@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"os"
+	"runtime"
 	"sync"
 	"time"
 )
@@ -27,12 +28,15 @@ func CreateFiles() {
 	fileNameChan := make(chan string, n)
 	fileContentChan := make(chan string, n)
 
+	// Получаем количество доступных процессоров
+	numCPUs := runtime.NumCPU()
+
 	// Используем wait group для ожидания завершения всех горутин
 	var wg sync.WaitGroup
-	wg.Add(n)
+	wg.Add(numCPUs)
 
 	// Создаем горутины, каждая из которых создает файл с заданным именем и содержимым
-	for i := 0; i < n; i++ {
+	for i := 0; i < numCPUs; i++ {
 		// Генерируем случайное имя файла и отправляем его в канал fileNameChan
 		go func() {
 			fileName := generateRandomString(10)
