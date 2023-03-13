@@ -32,6 +32,12 @@ func CountSymbolsInFiles() {
 		panic(err)
 	}
 
+	if len(files) == 0 {
+		fmt.Println("В папке .folderWithFiles/ нет файлов")
+	} else {
+		fmt.Printf("В указанной папке есть %d файлов, вот гистограмма распределения символов в них:\n", len(files))
+	}
+
 	// Создаем канал для передачи файлов в горутины
 	fileChan := make(chan os.DirEntry)
 
