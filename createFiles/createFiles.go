@@ -5,15 +5,17 @@ import (
 	"io/ioutil"
 	"math/rand"
 	"os"
-	"runtime"
 	"sync"
 	"time"
 )
 
 func CreateFiles() {
+	// Начало выполнения кода CreateFiles()
+	start := time.Now()
+
 	// Указываем папку для создания файлов и количество файлов, которые нужно создать
 	folderPath := "folderWithFiles"
-	n := 10
+	n := 100
 
 	// Создаем папку, если ее нет
 	err := os.MkdirAll(folderPath, os.ModePerm)
@@ -28,15 +30,12 @@ func CreateFiles() {
 	fileNameChan := make(chan string, n)
 	fileContentChan := make(chan string, n)
 
-	// Получаем количество доступных процессоров
-	numCPUs := runtime.NumCPU()
-
 	// Используем wait group для ожидания завершения всех горутин
 	var wg sync.WaitGroup
-	wg.Add(numCPUs)
+	wg.Add(n)
 
 	// Создаем горутины, каждая из которых создает файл с заданным именем и содержимым
-	for i := 0; i < numCPUs; i++ {
+	for i := 0; i < n; i++ {
 		// Генерируем случайное имя файла и отправляем его в канал fileNameChan
 		go func() {
 			fileName := generateRandomString(10)
@@ -67,6 +66,10 @@ func CreateFiles() {
 
 	// Ожидаем завершения всех горутин
 	wg.Wait()
+
+	// Продолжительность работы CreateFiles()
+	duration := time.Since(start)
+	fmt.Println(duration)
 }
 
 // Генерирует случайную строку указанной длины

@@ -8,10 +8,14 @@ import (
 	"path/filepath"
 	"runtime"
 	"sync"
+	"time"
 )
 
 // CountSymbolsInFiles подсчет символов в файлах
 func CountSymbolsInFiles() {
+	// Начало выполнения кода CountSymbolsInFiles()
+	start := time.Now()
+
 	var mutex sync.Mutex
 	// Получаем количество доступных процессоров
 	numCPUs := runtime.NumCPU()
@@ -86,4 +90,8 @@ func CountSymbolsInFiles() {
 	for char, count := range charCount {
 		fmt.Printf("%c %d\n", char, count)
 	}
+
+	// Продолжительность работы CountSymbolsInFiles()
+	duration := time.Since(start)
+	fmt.Println(duration)
 }
